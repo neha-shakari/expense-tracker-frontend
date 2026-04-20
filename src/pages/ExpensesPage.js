@@ -1,14 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import ExpenseItem from '../ExpenseItem';
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { token } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:8080/expenses", {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    fetch('http://localhost:8080/expenses', {
       headers: {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZWhhIiwiaWF0IjoxNzc2NjgzOTE5LCJleHAiOjE3NzY3MTk5MTl9.a5gkZ2KrfLJPNwxlGCseM-3yxsxhUwgEwCEHmy34mB0"
+        'Authorization': `Bearer ${token}`
       }
     })
       .then(res => res.json())
@@ -17,7 +26,7 @@ function ExpensesPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [token]);
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen">
