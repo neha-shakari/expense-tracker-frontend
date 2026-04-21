@@ -3,6 +3,8 @@ import Navbar from './Navbar';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ExpensesPage from './pages/ExpensesPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import BudgetPage from './pages/BudgetPage';
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/expenses" element={<ExpensesPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/budget" element={<BudgetPage />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>

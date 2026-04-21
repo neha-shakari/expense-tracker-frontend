@@ -25,6 +25,14 @@ function Navbar() {
             className="text-gray-300 hover:text-white transition">
             💰 Expenses
           </Link>
+          <Link to="/analytics"
+            className="text-gray-300 hover:text-white transition">
+            📈 Analytics
+          </Link>
+          <Link to="/budget"
+            className="text-gray-300 hover:text-white transition">
+            💡 Budget
+          </Link>
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
