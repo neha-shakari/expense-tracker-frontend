@@ -40,10 +40,16 @@ function Navbar() {
           </button>
         </>
       ) : (
-        <Link to="/login"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-          🔐 Login
-        </Link>
+        <>
+          <Link to="/login"
+            className="text-gray-300 hover:text-white transition">
+            🔐 Login
+          </Link>
+          <Link to="/register"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+            ✨ Register
+          </Link>
+        </>
       )}
     </nav>
   );
