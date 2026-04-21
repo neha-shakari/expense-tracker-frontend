@@ -5,12 +5,15 @@ import useApi from '../useApi';
 import ExpenseItem from '../ExpenseItem';
 import SpendingPieChart from '../SpendingPieChart';
 import SpendingBarChart from '../SpendingBarChart';
+import LoadingSpinner from '../LoadingSpinner';
+import ErrorMessage from '../ErrorMessage';
 
 function DashboardPage() {
   const [summary, setSummary] = useState(null);
   const [byCategory, setByCategory] = useState({});
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const { token } = useAuth();
   const { apiCall } = useApi();
@@ -33,14 +36,14 @@ function DashboardPage() {
         setRecentExpenses(expensesData.slice(0, 5));
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError('Failed to load dashboard data!');
+        setLoading(false);
+      });
   }, [token]);
 
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <h2 className="text-2xl text-gray-500">Loading... ⏳</h2>
-    </div>
-  );
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

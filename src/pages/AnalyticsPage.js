@@ -4,12 +4,15 @@ import { useAuth } from '../AuthContext';
 import useApi from '../useApi';
 import SpendingPieChart from '../SpendingPieChart';
 import SpendingBarChart from '../SpendingBarChart';
+import LoadingSpinner from '../LoadingSpinner';
+import ErrorMessage from '../ErrorMessage';
 
 function AnalyticsPage() {
   const [summary, setSummary] = useState(null);
   const [byCategory, setByCategory] = useState({});
   const [highestCategory, setHighestCategory] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const { token } = useAuth();
   const { apiCall } = useApi();
@@ -32,14 +35,14 @@ function AnalyticsPage() {
         setHighestCategory(highestData);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError('Failed to load analytics!');
+        setLoading(false);
+      });
   }, [token]);
 
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <h2 className="text-2xl text-gray-500">Loading... ⏳</h2>
-    </div>
-  );
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} onRetry={() => window.location.reload()} />;
 
   const totalSpent = summary?.totalThisMonth || 0;
 
@@ -103,7 +106,7 @@ function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Category Breakdown with percentage bars */}
+      {/* Category Breakdown with progress bars */}
       <div className="bg-white rounded-xl shadow p-6">
         <h2 className="text-xl font-bold text-gray-800 mb-4">
           💰 Category Breakdown

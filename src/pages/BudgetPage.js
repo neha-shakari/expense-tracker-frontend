@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import useApi from '../useApi';
+import LoadingSpinner from '../LoadingSpinner';
 
 const CATEGORIES = [
   'FOOD', 'TRAVEL', 'BILLS',
@@ -67,11 +68,7 @@ function BudgetPage() {
       });
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <h2 className="text-2xl text-gray-500">Loading... ⏳</h2>
-    </div>
-  );
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -174,7 +171,6 @@ function BudgetPage() {
                   </span>
                 </div>
 
-                {/* Progress bar */}
                 <div className="w-full bg-gray-200 rounded-full h-4">
                   <div
                     className={`h-4 rounded-full transition-all ${

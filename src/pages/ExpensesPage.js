@@ -5,6 +5,7 @@ import useApi from '../useApi';
 import ExpenseItem from '../ExpenseItem';
 import AddExpenseForm from '../AddExpenseForm';
 import FilterBar from '../FilterBar';
+import LoadingSpinner from '../LoadingSpinner';
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
@@ -30,7 +31,6 @@ function ExpensesPage() {
   const fetchExpenses = () => {
     setLoading(true);
 
-    // build query string based on filters
     const params = new URLSearchParams();
     if (filters.category) params.append('category', filters.category);
     if (filters.month) params.append('month', filters.month);
@@ -87,9 +87,7 @@ function ExpensesPage() {
       />
 
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <h2 className="text-2xl text-gray-500">Loading... ⏳</h2>
-        </div>
+        <LoadingSpinner />
       ) : (
         <div className="max-w-2xl">
           <p className="text-gray-500 mb-4">
