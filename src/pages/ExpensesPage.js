@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import useApi from '../useApi';
 import ExpenseItem from '../ExpenseItem';
+import AddExpenseForm from '../AddExpenseForm';
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
+  const { apiCall } = useApi();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,11 +18,7 @@ function ExpensesPage() {
       return;
     }
 
-    fetch('http://localhost:8080/expenses', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
+    apiCall('/expenses')
       .then(res => res.json())
       .then(data => {
         setExpenses(data);
@@ -27,6 +26,20 @@ function ExpensesPage() {
       })
       .catch(() => setLoading(false));
   }, [token]);
+
+  const handleExpenseAdded = (newExpense) => {
+    setExpenses([...expenses, newExpense]);
+  };
+
+  const handleExpenseDeleted = (id) => {
+    setExpenses(expenses.filter(e => e.id !== id));
+  };
+
+  const handleExpenseUpdated = (updatedExpense) => {
+    setExpenses(expenses.map(e =>
+      e.id === updatedExpense.id ? updatedExpense : e
+    ));
+  };
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen">
@@ -39,19 +52,22 @@ function ExpensesPage() {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
         💰 My Expenses
       </h1>
-      <p className="text-gray-500 mb-4">
-        Total: {expenses.length} expenses
-      </p>
+
+      <AddExpenseForm onExpenseAdded={handleExpenseAdded} />
+
       <div className="max-w-2xl">
+        <p className="text-gray-500 mb-4">
+          Total: {expenses.length} expenses
+        </p>
         {expenses.length === 0 ? (
-          <p className="text-gray-500">No expenses yet! Add some 😊</p>
+          <p className="text-gray-500">No expenses yet! Add some above 😊</p>
         ) : (
           expenses.map(expense => (
             <ExpenseItem
               key={expense.id}
-              title={expense.title}
-              amount={expense.amount}
-              category={expense.category}
+              expense={expense}
+              onDeleted={handleExpenseDeleted}
+              onUpdated={handleExpenseUpdated}
             />
           ))
         )}

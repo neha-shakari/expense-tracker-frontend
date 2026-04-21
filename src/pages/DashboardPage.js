@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import useApi from '../useApi';
 import ExpenseItem from '../ExpenseItem';
+import SpendingPieChart from '../SpendingPieChart';
+import SpendingBarChart from '../SpendingBarChart';
 
 function DashboardPage() {
   const [summary, setSummary] = useState(null);
@@ -20,7 +22,6 @@ function DashboardPage() {
       return;
     }
 
-    // fetch all data in parallel
     Promise.all([
       apiCall('/analytics/summary').then(res => res.json()),
       apiCall('/analytics/by-category').then(res => res.json()),
@@ -66,7 +67,8 @@ function DashboardPage() {
           <p className="text-gray-500 text-sm mb-1">Highest Category</p>
           <h2 className="text-3xl font-bold text-green-600">
             {Object.keys(byCategory).length > 0
-              ? Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0][0]
+              ? Object.entries(byCategory)
+                  .sort((a, b) => b[1] - a[1])[0][0]
               : 'N/A'}
           </h2>
         </div>
@@ -79,6 +81,23 @@ function DashboardPage() {
         </div>
       </div>
 
+      {/* Charts Row */}
+      <div className="grid grid-cols-2 gap-6 mb-8">
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            🍕 Spending by Category
+          </h2>
+          <SpendingPieChart byCategory={byCategory} />
+        </div>
+
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            📈 This Month vs Last Month
+          </h2>
+          <SpendingBarChart summary={summary} />
+        </div>
+      </div>
+
       {/* Category Breakdown */}
       <div className="bg-white rounded-xl shadow p-6 mb-6">
         <h2 className="text-xl font-bold text-gray-800 mb-4">
@@ -87,13 +106,19 @@ function DashboardPage() {
         {Object.keys(byCategory).length === 0 ? (
           <p className="text-gray-500">No data yet!</p>
         ) : (
-          Object.entries(byCategory).map(([category, amount]) => (
-            <div key={category}
-              className="flex justify-between items-center py-2 border-b last:border-0">
-              <span className="text-gray-700 font-medium">{category}</span>
-              <span className="text-gray-800 font-bold">₹{amount}</span>
-            </div>
-          ))
+          Object.entries(byCategory)
+            .sort((a, b) => b[1] - a[1])
+            .map(([category, amount]) => (
+              <div key={category}
+                className="flex justify-between items-center py-2 border-b last:border-0">
+                <span className="text-gray-700 font-medium">
+                  {category}
+                </span>
+                <span className="text-gray-800 font-bold">
+                  ₹{amount}
+                </span>
+              </div>
+            ))
         )}
       </div>
 
@@ -108,9 +133,9 @@ function DashboardPage() {
           recentExpenses.map(expense => (
             <ExpenseItem
               key={expense.id}
-              title={expense.title}
-              amount={expense.amount}
-              category={expense.category}
+              expense={expense}
+              onDeleted={() => {}}
+              onUpdated={() => {}}
             />
           ))
         )}
